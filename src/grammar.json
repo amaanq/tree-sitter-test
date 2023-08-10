@@ -7,9 +7,6 @@
         {
           "type": "STRING",
           "value": "hello"
-        },
-        {
-          "type": "EOF"
         }
       ]
     }
