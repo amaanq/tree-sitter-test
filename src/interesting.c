@@ -25,7 +25,7 @@ enum {
 static const char * const ts_symbol_names[] = {
   [ts_builtin_sym_end] = "end",
   [anon_sym_hello] = "hello",
-  [eof_sym] = "eof",
+  [eof_sym] = "a",
   [sym_source_file] = "source_file",
 };
 
@@ -71,15 +71,25 @@ static const TSStateId ts_primary_state_ids[STATE_COUNT] = {
   [4] = 4,
 };
 
-bool accepted_eof = false;
+int accepted_eof_count = 0;
 
 static bool ts_lex(TSLexer *lexer, TSStateId state) {
+  printf("state=%d\n", state);
   START_LEXER();
   eof = lexer->eof(lexer);
   switch (state) {
     case 0:
-	  if (!accepted_eof && eof) {accepted_eof = true; ADVANCE(7);}
-      if (eof) ADVANCE(5);
+	  if (eof) {
+		switch (accepted_eof_count) {
+		  case 0:
+			accepted_eof_count++;
+			ADVANCE(7);
+			break;
+		  case 1:
+		    ADVANCE(5);
+		    break;
+		}
+	  }
       if (lookahead == 'h') ADVANCE(1);
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(0)
